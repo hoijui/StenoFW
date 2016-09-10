@@ -232,7 +232,7 @@ void checkAlreadyDebouncingKeys() {
         debouncingKeys[i][j] = false;
         continue;
       }
-      if (debouncingKeys[i][j] == true && micros() - debouncingMicros[i][j] / 1000 > debounceMillis) {
+      if (debouncingKeys[i][j] == true && (micros() - debouncingMicros[i][j]) / 1000 > debounceMillis) {
         isStrokeInProgress = true;
         currentChord[i][j] = true;
         return;
