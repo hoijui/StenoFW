@@ -57,8 +57,9 @@ int protocol = NKRO;
 void setup() {
   Keyboard.begin();
   Serial.begin(9600);
-  for (int i = 0; i < COLS; i++)
+  for (int i = 0; i < COLS; i++) {
     pinMode(colPins[i], INPUT_PULLUP);
+  }
   for (int i = 0; i < ROWS; i++) {
     pinMode(rowPins[i], OUTPUT);
     digitalWrite(rowPins[i], HIGH);
@@ -156,8 +157,9 @@ void clearBooleanMatrix(boolean booleanMatrix[][COLS], boolean value) {
 void readKeys() {
   for (int i = 0; i < ROWS; i++) {
     digitalWrite(rowPins[i], LOW);
-    for (int j = 0; j < COLS; j++)
+    for (int j = 0; j < COLS; j++) {
       currentKeyReadings[i][j] = digitalRead(colPins[j]) == LOW ? true : false;
+    }
     digitalWrite(rowPins[i], HIGH);
   }
 }
@@ -177,18 +179,23 @@ void sendChordNkro() {
   boolean firstKeyPressed = false;
 
   // Calculate qwerty keys array using qwertyMappings[][]
-  for (int i = 0; i < ROWS; i++)
-    for (int j = 0; j < COLS; j++)
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
       if (currentChord[i][j]) {
         qwertyKeys[keyCounter] = qwertyMapping[i][j];
         keyCounter++;
       }
+    }
+  }
   // Emulate keyboard key presses
   for (int i = 0; i < keyCounter; i++) {
     if (qwertyKeys[i] != ' ') {
       Keyboard.press(qwertyKeys[i]);
-      if (!firstKeyPressed) firstKeyPressed = true;
-      else Keyboard.release(qwertyKeys[i]);
+      if (!firstKeyPressed) {
+        firstKeyPressed = true;
+      } else {
+        Keyboard.release(qwertyKeys[i]);
+      }
     }
   }
   Keyboard.releaseAll();
@@ -298,65 +305,119 @@ void sendChordTxBolt() {
 
   // byte 1
   // S-
-  if (currentChord[0][0] || currentChord[1][0]) chordBytes[index] |= B00000001;
+  if (currentChord[0][0] || currentChord[1][0]) {
+    chordBytes[index] |= B00000001;
+  }
   // T-
-  if (currentChord[0][1]) chordBytes[index] |= B00000010;
+  if (currentChord[0][1]) {
+    chordBytes[index] |= B00000010;
+  }
   // K-
-  if (currentChord[1][1]) chordBytes[index] |= B00000100;
+  if (currentChord[1][1]) {
+    chordBytes[index] |= B00000100;
+  }
   // P-
-  if (currentChord[0][2]) chordBytes[index] |= B00001000;
+  if (currentChord[0][2]) {
+    chordBytes[index] |= B00001000;
+  }
   // W-
-  if (currentChord[1][2]) chordBytes[index] |= B00010000;
+  if (currentChord[1][2]) {
+    chordBytes[index] |= B00010000;
+  }
   // H-
-  if (currentChord[0][3]) chordBytes[index] |= B00100000;
+  if (currentChord[0][3]) {
+    chordBytes[index] |= B00100000;
+  }
   // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) index++;
+  if (chordBytes[index]) {
+    index++;
+  }
 
   // byte 2
   // R-
-  if (currentChord[1][3]) chordBytes[index] |= B01000001;
+  if (currentChord[1][3]) {
+    chordBytes[index] |= B01000001;
+  }
   // A
-  if (currentChord[2][0]) chordBytes[index] |= B01000010;
+  if (currentChord[2][0]) {
+    chordBytes[index] |= B01000010;
+  }
   // O
-  if (currentChord[2][1]) chordBytes[index] |= B01000100;
+  if (currentChord[2][1]) {
+    chordBytes[index] |= B01000100;
+  }
   // *
-  if (currentChord[0][4] || currentChord[1][4]) chordBytes[index] |= B01001000;
+  if (currentChord[0][4] || currentChord[1][4]) {
+    chordBytes[index] |= B01001000;
+  }
   // E
-  if (currentChord[2][2]) chordBytes[index] |= B01010000;
+  if (currentChord[2][2]) {
+    chordBytes[index] |= B01010000;
+  }
   // U
-  if (currentChord[2][3]) chordBytes[index] |= B01100000;
+  if (currentChord[2][3]) {
+    chordBytes[index] |= B01100000;
+  }
   // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) index++;
+  if (chordBytes[index]) {
+    index++;
+  }
 
   // byte 3
   // -F
-  if (currentChord[3][0]) chordBytes[index] |= B10000001;
+  if (currentChord[3][0]) {
+    chordBytes[index] |= B10000001;
+  }
   // -R
-  if (currentChord[4][0]) chordBytes[index] |= B10000010;
+  if (currentChord[4][0]) {
+    chordBytes[index] |= B10000010;
+  }
   // -P
-  if (currentChord[3][1]) chordBytes[index] |= B10000100;
+  if (currentChord[3][1]) {
+    chordBytes[index] |= B10000100;
+  }
   // -B
-  if (currentChord[4][1]) chordBytes[index] |= B10001000;
+  if (currentChord[4][1]) {
+    chordBytes[index] |= B10001000;
+  }
   // -L
-  if (currentChord[3][2]) chordBytes[index] |= B10010000;
+  if (currentChord[3][2]) {
+    chordBytes[index] |= B10010000;
+  }
   // -G
-  if (currentChord[4][2]) chordBytes[index] |= B10100000;
+  if (currentChord[4][2]) {
+    chordBytes[index] |= B10100000;
+  }
   // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) index++;
+  if (chordBytes[index]) {
+    index++;
+  }
 
   // byte 4
   // -T
-  if (currentChord[3][3]) chordBytes[index] |= B11000001;
+  if (currentChord[3][3]) {
+    chordBytes[index] |= B11000001;
+  }
   // -S
-  if (currentChord[4][3]) chordBytes[index] |= B11000010;
+  if (currentChord[4][3]) {
+    chordBytes[index] |= B11000010;
+  }
   // -D
-  if (currentChord[3][4]) chordBytes[index] |= B11000100;
+  if (currentChord[3][4]) {
+    chordBytes[index] |= B11000100;
+  }
   // -Z
-  if (currentChord[4][4]) chordBytes[index] |= B11001000;
+  if (currentChord[4][4]) {
+    chordBytes[index] |= B11001000;
+  }
   // #
-  if (currentChord[2][4]) chordBytes[index] |= B11010000;
+  if (currentChord[2][4]) {
+    chordBytes[index] |= B11010000;
+  }
   // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) index++;
+  if (chordBytes[index]) {
+    index++;
+  }
 
   // Now we have index bytes followed by a zero byte where 0 < index <= 4.
   index++; // Increment index to include the trailing zero byte.
@@ -442,18 +503,30 @@ void fn1fn2() {
   if (currentChord[0][3] && currentChord[1][3]) {
     // "-P" -> LED intensity up
     if (currentChord[3][1]) {
-      if (ledIntensity == 0) ledIntensity +=1;
-      else if(ledIntensity < 50) ledIntensity += 10;
-      else ledIntensity += 30;
-      if (ledIntensity > 255) ledIntensity = 0;
+      if (ledIntensity == 0) {
+        ledIntensity +=1;
+      } else if(ledIntensity < 50) {
+        ledIntensity += 10;
+      } else {
+        ledIntensity += 30;
+      }
+      if (ledIntensity > 255) {
+        ledIntensity = 0;
+      }
       analogWrite(ledPin, ledIntensity);
     }
     // "-F" -> LED intensity down
     if (currentChord[3][0]) {
-      if(ledIntensity == 0) ledIntensity = 255;
-      else if(ledIntensity < 50) ledIntensity -= 10;
-      else ledIntensity -= 30;
-      if (ledIntensity < 1) ledIntensity = 0;
+      if (ledIntensity == 0) {
+        ledIntensity = 255;
+      } else if (ledIntensity < 50) {
+        ledIntensity -= 10;
+      } else {
+        ledIntensity -= 30;
+      }
+      if (ledIntensity < 1) {
+        ledIntensity = 0;
+      }
       analogWrite(ledPin, ledIntensity);
     }
   }
