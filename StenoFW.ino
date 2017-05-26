@@ -17,6 +17,8 @@
  * Copyright 2014 Emanuele Caruso. See LICENSE.txt for details.
  */
 
+#include <Keyboard.h>
+
 #define ROWS 5
 #define COLS 6
 
