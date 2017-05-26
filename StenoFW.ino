@@ -16,7 +16,7 @@
  *
  * Copyright 2014 Emanuele Caruso. See LICENSE.txt for details.
  */
- 
+
 #define ROWS 5
 #define COLS 6
 
@@ -69,20 +69,20 @@ void setup() {
 // Read key states and handle all chord events
 void loop() {
   readKeys();
-  
+
   boolean isAnyKeyPressed = true;
-  
+
   // If stroke is not in progress, check debouncing keys
   if (!isStrokeInProgress) {
     checkAlreadyDebouncingKeys();
     if (!isStrokeInProgress) checkNewDebouncingKeys();
   }
-  
+
   // If any key was pressed, record all pressed keys
   if (isStrokeInProgress) {
     isAnyKeyPressed = recordCurrentKeys();
   }
-  
+
   // If all keys have been released, send the chord and reset global state
   if (!isAnyKeyPressed) {
     sendChord();
@@ -173,7 +173,7 @@ void sendChordNkro() {
   int keyCounter = 0;
   char qwertyKeys[ROWS * COLS];
   boolean firstKeyPressed = false;
-  
+
   // Calculate qwerty keys array using qwertyMappings[][]
   for (int i = 0; i < ROWS; i++)
     for (int j = 0; j < COLS; j++)
@@ -191,17 +191,17 @@ void sendChordNkro() {
   }
   Keyboard.releaseAll();
 }
- 
-// Send current chord over serial using the Gemini protocol. 
+
+// Send current chord over serial using the Gemini protocol.
 void sendChordGemini() {
   // Initialize chord bytes
   byte chordBytes[] = {B10000000, B0, B0, B0, B0, B0};
-  
+
   // Byte 0
   if (currentChord[2][4]) {
     chordBytes[0] = B10000001;
   }
-  
+
   // Byte 1
   if (currentChord[0][0] || currentChord[1][0]) {
     chordBytes[1] += B01000000;
@@ -221,7 +221,7 @@ void sendChordGemini() {
   if (currentChord[0][3]) {
     chordBytes[1] += B00000001;
   }
-  
+
   // Byte 2
   if (currentChord[1][3]) {
     chordBytes[2] += B01000000;
@@ -235,7 +235,7 @@ void sendChordGemini() {
   if (currentChord[0][4] || currentChord[1][4]) {
     chordBytes[2] += B00001000;
   }
-  
+
   // Byte 3
   if (currentChord[2][2]) {
     chordBytes[3] += B00001000;
@@ -249,7 +249,7 @@ void sendChordGemini() {
   if (currentChord[4][0]) {
     chordBytes[3] += B00000001;
   }
-  
+
   // Byte 4
   if (currentChord[3][1]) {
     chordBytes[4] += B01000000;
@@ -287,18 +287,18 @@ void sendChordGemini() {
 void sendChordTxBolt() {
   byte chordBytes[] = {B0, B0, B0, B0, B0};
   int index = 0;
-  
+
   // TX Bolt uses a variable length packet. Only those bytes that have active
   // keys are sent. The header bytes indicate which keys are being sent. They
   // must be sent in order. It is a good idea to send a zero after every packet.
   // 00XXXXXX 01XXXXXX 10XXXXXX 110XXXXX
   //   HWPKTS   UE*OAR   GLBPRF    #ZDST
-  
+
   // byte 1
   // S-
   if (currentChord[0][0] || currentChord[1][0]) chordBytes[index] |= B00000001;
   // T-
-  if (currentChord[0][1]) chordBytes[index] |= B00000010;  
+  if (currentChord[0][1]) chordBytes[index] |= B00000010;
   // K-
   if (currentChord[1][1]) chordBytes[index] |= B00000100;
   // P-
@@ -309,7 +309,7 @@ void sendChordTxBolt() {
   if (currentChord[0][3]) chordBytes[index] |= B00100000;
   // Increment the index if the current byte has any keys set.
   if (chordBytes[index]) index++;
-  
+
   // byte 2
   // R-
   if (currentChord[1][3]) chordBytes[index] |= B01000001;
@@ -325,7 +325,7 @@ void sendChordTxBolt() {
   if (currentChord[2][3]) chordBytes[index] |= B01100000;
   // Increment the index if the current byte has any keys set.
   if (chordBytes[index]) index++;
-  
+
   // byte 3
   // -F
   if (currentChord[3][0]) chordBytes[index] |= B10000001;
@@ -341,7 +341,7 @@ void sendChordTxBolt() {
   if (currentChord[4][2]) chordBytes[index] |= B10100000;
   // Increment the index if the current byte has any keys set.
   if (chordBytes[index]) index++;
-  
+
   // byte 4
   // -T
   if (currentChord[3][3]) chordBytes[index] |= B11000001;
@@ -355,7 +355,7 @@ void sendChordTxBolt() {
   if (currentChord[2][4]) chordBytes[index] |= B11010000;
   // Increment the index if the current byte has any keys set.
   if (chordBytes[index]) index++;
-  
+
   // Now we have index bytes followed by a zero byte where 0 < index <= 4.
   index++; // Increment index to include the trailing zero byte.
   for (int i = 0; i < index; i++) {
@@ -379,7 +379,7 @@ void sendChord() {
     fn2();
     return;
   }
-  
+
   if (protocol == NKRO) {
     sendChordNkro();
   } else if (protocol == GEMINI) {
@@ -456,3 +456,4 @@ void fn1fn2() {
     }
   }
 }
+
