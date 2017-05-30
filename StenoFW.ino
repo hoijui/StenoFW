@@ -17,6 +17,14 @@
  * Copyright 2014 Emanuele Caruso. See the LICENSE file for details.
  */
 
+#define PROTOCOL_SUPPORT_GEMINI
+#define PROTOCOL_SUPPORT_NKRO
+#define PROTOCOL_SUPPORT_TX_BOLT
+
+//#define PROTOCOL_DEFAULT protocolGemini
+#define PROTOCOL_DEFAULT protocolNKRO
+//#define PROTOCOL_DEFAULT protocolTxBolt
+
 /** Number of key rows of our keyboard hardware */
 extern const int ROWS = 5;
 /** Number of key columns of our keyboard hardware */
@@ -95,9 +103,15 @@ extern const int KEY_s_D1 = 3;
 extern const int KEY_z_D0 = 4;
 extern const int KEY_z_D1 = 4;
 
-#include "GeminiProtocol.h"
-#include "NKROProtocol.h"
-#include "TxBoltProtocol.h"
+#ifdef PROTOCOL_SUPPORT_GEMINI
+  #include "GeminiProtocol.h"
+#endif
+#ifdef PROTOCOL_SUPPORT_NKRO
+  #include "NKROProtocol.h"
+#endif
+#ifdef PROTOCOL_SUPPORT_TX_BOLT
+  #include "TxBoltProtocol.h"
+#endif
 
 // Configuration variables
 const int rowPins[ROWS] = {13, 12, 11, 10, 9};
@@ -115,18 +129,26 @@ unsigned long debouncingMicros[ROWS][COLS];
 // Other state variables
 int ledIntensity = 1; // Min 0 - Max 255
 
-// Protocol
+// Protocols
+#ifdef PROTOCOL_SUPPORT_GEMINI
 GeminiProtocol protocolGemini;
+#endif
+#ifdef PROTOCOL_SUPPORT_NKRO
 NKROProtocol protocolNKRO;
+#endif
+#ifdef PROTOCOL_SUPPORT_TX_BOLT
 TxBoltProtocol protocolTxBolt;
-Protocol& protocol = protocolNKRO;
+#endif
+Protocol& protocol = PROTOCOL_DEFAULT;
 
 /**
  * Sets up the initial state.
  * This is called when the keyboard is connected.
  */
 void setup() {
+#if defined(PROTOCOL_SUPPORT_GEMINI) || defined(PROTOCOL_SUPPORT_TX_BOLT)
   Serial.begin(9600);
+#endif
   for (int i = 0; i < COLS; i++) {
     pinMode(colPins[i], INPUT_PULLUP);
   }
@@ -283,21 +305,28 @@ void sendChord() {
  *   PH-B   ->   Set TX Bolt protocol mode
  */
 void fn1() {
+#if defined(PROTOCOL_SUPPORT_GEMINI) || defined(PROTOCOL_SUPPORT_NKRO) || defined(PROTOCOL_SUPPORT_TX_BOLT)
   // "PH" -> Set protocol
   if (currentChord[KEY_P_D0][KEY_P_D1] && currentChord[KEY_H_D0][KEY_H_D1]) {
+  #ifdef PROTOCOL_SUPPORT_GEMINI
+    if (currentChord[KEY_g_D0][KEY_g_D1]) {
+      protocol = protocolGemini;
+    }
+  #endif
+  #ifdef PROTOCOL_SUPPORT_NKRO
     // "-PB" -> NKRO Keyboard
     if (currentChord[KEY_p_D0][KEY_p_D1] && currentChord[KEY_b_D0][KEY_b_D1]) {
       protocol = protocolNKRO;
     }
-    // "-G" -> Gemini PR
-    else if (currentChord[KEY_g_D0][KEY_g_D1]) {
-      protocol = protocolGemini;
-    }
+  #endif
+  #ifdef PROTOCOL_SUPPORT_TX_BOLT
     // "-B" -> TX Bolt
-    else if (currentChord[KEY_b_D0][KEY_b_D1]) {
+    if (currentChord[KEY_b_D0][KEY_b_D1]) {
       protocol = protocolTxBolt;
     }
+  #endif
   }
+#endif
 }
 
 /**
