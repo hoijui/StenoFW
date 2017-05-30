@@ -17,12 +17,10 @@
  * Copyright 2014 Emanuele Caruso. See the LICENSE file for details.
  */
 
-#include <Keyboard.h>
-
-// Number of key rows of our keyboard hardware
-#define ROWS 5
-// Number of key columns of our keyboard hardware
-#define COLS 6
+/** Number of key rows of our keyboard hardware */
+extern const int ROWS = 5;
+/** Number of key columns of our keyboard hardware */
+extern const int COLS = 6;
 
 /* The following matrix is shown here for reference only.
 char keys[ROWS][COLS] = {
@@ -32,6 +30,10 @@ char keys[ROWS][COLS] = {
   {'f', 'p', 'l', 't', 'd'},
   {'r', 'b', 'g', 's', 'z'}
 };*/
+
+#include "GeminiProtocol.h"
+#include "NKROProtocol.h"
+#include "TxBoltProtocol.h"
 
 // Configuration variables
 int rowPins[ROWS] = {13, 12, 11, 10, 9};
@@ -49,18 +51,17 @@ unsigned long debouncingMicros[ROWS][COLS];
 // Other state variables
 int ledIntensity = 1; // Min 0 - Max 255
 
-// Protocol state
-#define GEMINI 0
-#define TXBOLT 1
-#define NKRO 2
-int protocol = NKRO;
+// Protocol
+GeminiProtocol protocolGemini;
+NKROProtocol protocolNKRO;
+TxBoltProtocol protocolTxBolt;
+Protocol& protocol = protocolNKRO;
 
 /**
  * Sets up the initial state.
  * This is called when the keyboard is connected.
  */
 void setup() {
-  Keyboard.begin();
   Serial.begin(9600);
   for (int i = 0; i < COLS; i++) {
     pinMode(colPins[i], INPUT_PULLUP);
@@ -187,276 +188,6 @@ void readKeys() {
 }
 
 /**
- * Sends the current chord using the NKRO keyboard emulation.
- */
-void sendChordNkro() {
-  // QWERTY mapping
-  char qwertyMapping[ROWS][COLS] = {
-    {'q', 'w', 'e', 'r', 't', ' '},
-    {'a', 's', 'd', 'f', 'g', ' '},
-    {'c', 'v', 'n', 'm', '3', ' '},
-    {'u', 'i', 'o', 'p', '[', ' '},
-    {'j', 'k', 'l', ';', '\'', ' '}
-  };
-  int keyCounter = 0;
-  char qwertyKeys[ROWS * COLS];
-  boolean firstKeyPressed = false;
-
-  // Calculate qwerty keys array using qwertyMappings[][]
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if (currentChord[i][j]) {
-        qwertyKeys[keyCounter] = qwertyMapping[i][j];
-        keyCounter++;
-      }
-    }
-  }
-  // Emulate keyboard key presses
-  for (int i = 0; i < keyCounter; i++) {
-    if (qwertyKeys[i] != ' ') {
-      Keyboard.press(qwertyKeys[i]);
-      if (!firstKeyPressed) {
-        firstKeyPressed = true;
-      } else {
-        Keyboard.release(qwertyKeys[i]);
-      }
-    }
-  }
-  Keyboard.releaseAll();
-}
-
-/**
- * Sends the current chord over serial using the Gemini protocol.
- */
-void sendChordGemini() {
-  // Initialize chord bytes
-  byte chordBytes[] = {B10000000, B0, B0, B0, B0, B0};
-
-  // Byte 0
-  if (currentChord[2][4]) {
-    chordBytes[0] = B10000001;
-  }
-
-  // Byte 1
-  if (currentChord[0][0] || currentChord[1][0]) {
-    chordBytes[1] += B01000000;
-  }
-  if (currentChord[0][1]) {
-    chordBytes[1] += B00010000;
-  }
-  if (currentChord[1][1]) {
-    chordBytes[1] += B00001000;
-  }
-  if (currentChord[0][2]) {
-    chordBytes[1] += B00000100;
-  }
-  if (currentChord[1][2]) {
-    chordBytes[1] += B00000010;
-  }
-  if (currentChord[0][3]) {
-    chordBytes[1] += B00000001;
-  }
-
-  // Byte 2
-  if (currentChord[1][3]) {
-    chordBytes[2] += B01000000;
-  }
-  if (currentChord[2][0]) {
-    chordBytes[2] += B00100000;
-  }
-  if (currentChord[2][1]) {
-    chordBytes[2] += B00010000;
-  }
-  if (currentChord[0][4] || currentChord[1][4]) {
-    chordBytes[2] += B00001000;
-  }
-
-  // Byte 3
-  if (currentChord[2][2]) {
-    chordBytes[3] += B00001000;
-  }
-  if (currentChord[2][3]) {
-    chordBytes[3] += B00000100;
-  }
-  if (currentChord[3][0]) {
-    chordBytes[3] += B00000010;
-  }
-  if (currentChord[4][0]) {
-    chordBytes[3] += B00000001;
-  }
-
-  // Byte 4
-  if (currentChord[3][1]) {
-    chordBytes[4] += B01000000;
-  }
-  if (currentChord[4][1]) {
-    chordBytes[4] += B00100000;
-  }
-  if (currentChord[3][2]) {
-    chordBytes[4] += B00010000;
-  }
-  if (currentChord[4][2]) {
-    chordBytes[4] += B00001000;
-  }
-  if (currentChord[3][3]) {
-    chordBytes[4] += B00000100;
-  }
-  if (currentChord[4][3]) {
-    chordBytes[4] += B00000010;
-  }
-  if (currentChord[3][4]) {
-    chordBytes[4] += B00000001;
-  }
-
-  // Byte 5
-  if (currentChord[4][4]) {
-    chordBytes[5] += B00000001;
-  }
-
-  // Send chord bytes over serial
-  for (int i = 0; i < 6; i++) {
-    Serial.write(chordBytes[i]);
-  }
-}
-
-/**
- * Sends the current chord over serial using the TX Bolt protocol.
- * TX Bolt uses a variable length packet.
- * Only those bytes that have active keys are sent.
- * The header bytes indicate which keys are being sent.
- * They must be sent in order.
- * It is a good idea to send a zero after every packet.
- * 00XXXXXX 01XXXXXX 10XXXXXX 110XXXXX
- *   HWPKTS   UE*OAR   GLBPRF    #ZDST
- */
-void sendChordTxBolt() {
-  byte chordBytes[] = {B0, B0, B0, B0, B0};
-  int index = 0;
-
-  // byte 1
-  // S-
-  if (currentChord[0][0] || currentChord[1][0]) {
-    chordBytes[index] |= B00000001;
-  }
-  // T-
-  if (currentChord[0][1]) {
-    chordBytes[index] |= B00000010;
-  }
-  // K-
-  if (currentChord[1][1]) {
-    chordBytes[index] |= B00000100;
-  }
-  // P-
-  if (currentChord[0][2]) {
-    chordBytes[index] |= B00001000;
-  }
-  // W-
-  if (currentChord[1][2]) {
-    chordBytes[index] |= B00010000;
-  }
-  // H-
-  if (currentChord[0][3]) {
-    chordBytes[index] |= B00100000;
-  }
-  // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) {
-    index++;
-  }
-
-  // byte 2
-  // R-
-  if (currentChord[1][3]) {
-    chordBytes[index] |= B01000001;
-  }
-  // A
-  if (currentChord[2][0]) {
-    chordBytes[index] |= B01000010;
-  }
-  // O
-  if (currentChord[2][1]) {
-    chordBytes[index] |= B01000100;
-  }
-  // *
-  if (currentChord[0][4] || currentChord[1][4]) {
-    chordBytes[index] |= B01001000;
-  }
-  // E
-  if (currentChord[2][2]) {
-    chordBytes[index] |= B01010000;
-  }
-  // U
-  if (currentChord[2][3]) {
-    chordBytes[index] |= B01100000;
-  }
-  // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) {
-    index++;
-  }
-
-  // byte 3
-  // -F
-  if (currentChord[3][0]) {
-    chordBytes[index] |= B10000001;
-  }
-  // -R
-  if (currentChord[4][0]) {
-    chordBytes[index] |= B10000010;
-  }
-  // -P
-  if (currentChord[3][1]) {
-    chordBytes[index] |= B10000100;
-  }
-  // -B
-  if (currentChord[4][1]) {
-    chordBytes[index] |= B10001000;
-  }
-  // -L
-  if (currentChord[3][2]) {
-    chordBytes[index] |= B10010000;
-  }
-  // -G
-  if (currentChord[4][2]) {
-    chordBytes[index] |= B10100000;
-  }
-  // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) {
-    index++;
-  }
-
-  // byte 4
-  // -T
-  if (currentChord[3][3]) {
-    chordBytes[index] |= B11000001;
-  }
-  // -S
-  if (currentChord[4][3]) {
-    chordBytes[index] |= B11000010;
-  }
-  // -D
-  if (currentChord[3][4]) {
-    chordBytes[index] |= B11000100;
-  }
-  // -Z
-  if (currentChord[4][4]) {
-    chordBytes[index] |= B11001000;
-  }
-  // #
-  if (currentChord[2][4]) {
-    chordBytes[index] |= B11010000;
-  }
-  // Increment the index if the current byte has any keys set.
-  if (chordBytes[index]) {
-    index++;
-  }
-
-  // Now we have index bytes followed by a zero byte where 0 < index <= 4.
-  index++; // Increment index to include the trailing zero byte.
-  for (int i = 0; i < index; i++) {
-    Serial.write(chordBytes[i]);
-  }
-}
-
-/**
  * Sends the chord using the current protocol.
  * If there are fn keys pressed, delegate to the corresponding function instead.
  * In future versions, there should also be a way to handle fn key presses
@@ -467,21 +198,12 @@ void sendChord() {
   // If fn keys have been pressed, delegate to corresponding method and return
   if (currentChord[0][5] && currentChord[1][5]) {
     fn1fn2();
-    return;
   } else if (currentChord[0][5]) {
     fn1();
-    return;
   } else if (currentChord[1][5]) {
     fn2();
-    return;
-  }
-
-  if (protocol == NKRO) {
-    sendChordNkro();
-  } else if (protocol == GEMINI) {
-    sendChordGemini();
   } else {
-    sendChordTxBolt();
+    protocol.sendChord(currentChord);
   }
 }
 
@@ -500,15 +222,15 @@ void fn1() {
   if (currentChord[0][2] && currentChord[0][3]) {
     // "-PB" -> NKRO Keyboard
     if (currentChord[3][1] && currentChord[4][1]) {
-      protocol = NKRO;
+      protocol = protocolNKRO;
     }
     // "-G" -> Gemini PR
     else if (currentChord[4][2]) {
-      protocol = GEMINI;
+      protocol = protocolGemini;
     }
     // "-B" -> TX Bolt
     else if (currentChord[4][1]) {
-      protocol = TXBOLT;
+      protocol = protocolTxBolt;
     }
   }
 }
