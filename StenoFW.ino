@@ -195,7 +195,7 @@ void readKeys() {
  * eg. for mouse emulation functionality or custom key presses.
  */
 void sendChord() {
-  // If fn keys have been pressed, delegate to corresponding method and return
+  // If fn keys have been pressed, delegate to the corresponding method and return
   if (currentChord[0][5] && currentChord[1][5]) {
     fn1fn2();
   } else if (currentChord[0][5]) {
