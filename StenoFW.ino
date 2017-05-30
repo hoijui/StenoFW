@@ -36,10 +36,10 @@ char keys[ROWS][COLS] = {
 #include "TxBoltProtocol.h"
 
 // Configuration variables
-int rowPins[ROWS] = {13, 12, 11, 10, 9};
-int colPins[COLS] = {8, 7, 6, 5, 4, 2};
-int ledPin = 3;
-long debounceMillis = 20;
+const int rowPins[ROWS] = {13, 12, 11, 10, 9};
+const int colPins[COLS] = {8, 7, 6, 5, 4, 2};
+const int ledPin = 3;
+const long debounceMillis = 20;
 
 // Keyboard state variables
 boolean isStrokeInProgress = false;
@@ -167,7 +167,7 @@ void clearBooleanMatrixes() {
 /**
  * Sets all values of the passed matrix to the given value.
  */
-void clearBooleanMatrix(boolean booleanMatrix[][COLS], boolean value) {
+void clearBooleanMatrix(boolean booleanMatrix[][COLS], const boolean value) {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
       booleanMatrix[i][j] = value;
