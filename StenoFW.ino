@@ -505,32 +505,48 @@ void fn1fn2() {
   if (currentChord[0][3] && currentChord[1][3]) {
     // "-P" -> LED intensity up
     if (currentChord[3][1]) {
-      if (ledIntensity == 0) {
-        ledIntensity += 1;
-      } else if(ledIntensity < 50) {
-        ledIntensity += 10;
-      } else {
-        ledIntensity += 30;
-      }
-      if (ledIntensity > 255) {
-        ledIntensity = 0;
-      }
-      analogWrite(ledPin, ledIntensity);
+      ledIntensityUp();
     }
     // "-F" -> LED intensity down
     if (currentChord[3][0]) {
-      if (ledIntensity == 0) {
-        ledIntensity = 255;
-      } else if (ledIntensity < 50) {
-        ledIntensity -= 10;
-      } else {
-        ledIntensity -= 30;
-      }
-      if (ledIntensity < 1) {
-        ledIntensity = 0;
-      }
-      analogWrite(ledPin, ledIntensity);
+      ledIntensityDown();
     }
   }
+}
+
+/**
+ * Increases the LED intensity.
+ * This includes roll-over, meaning it goes from full brightness back to off.
+ */
+void ledIntensityUp() {
+  if (ledIntensity == 0) {
+    ledIntensity += 1;
+  } else if (ledIntensity < 50) {
+    ledIntensity += 10;
+  } else {
+    ledIntensity += 30;
+  }
+  if (ledIntensity > 255) {
+    ledIntensity = 0;
+  }
+  analogWrite(ledPin, ledIntensity);
+}
+
+/**
+ * Decreases the LED intensity.
+ * This includes roll-over, meaning it goes from off back to full brightness.
+ */
+void ledIntensityDown() {
+  if (ledIntensity == 0) {
+    ledIntensity = 255;
+  } else if (ledIntensity < 50) {
+    ledIntensity -= 10;
+  } else {
+    ledIntensity -= 30;
+  }
+  if (ledIntensity < 1) {
+    ledIntensity = 0;
+  }
+  analogWrite(ledPin, ledIntensity);
 }
 
