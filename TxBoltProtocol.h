@@ -45,27 +45,27 @@ public:
   
     // byte 1
     // S-
-    if (currentChord[0][0] || currentChord[1][0]) {
+    if (currentChord[KEY_S1_D0][KEY_S1_D1] || currentChord[KEY_S2_D0][KEY_S2_D1]) {
       chordBytes[index] |= B00000001;
     }
     // T-
-    if (currentChord[0][1]) {
+    if (currentChord[KEY_T_D0][KEY_T_D1]) {
       chordBytes[index] |= B00000010;
     }
     // K-
-    if (currentChord[1][1]) {
+    if (currentChord[KEY_K_D0][KEY_K_D1]) {
       chordBytes[index] |= B00000100;
     }
     // P-
-    if (currentChord[0][2]) {
+    if (currentChord[KEY_P_D0][KEY_P_D1]) {
       chordBytes[index] |= B00001000;
     }
     // W-
-    if (currentChord[1][2]) {
+    if (currentChord[KEY_W_D0][KEY_W_D1]) {
       chordBytes[index] |= B00010000;
     }
     // H-
-    if (currentChord[0][3]) {
+    if (currentChord[KEY_H_D0][KEY_H_D1]) {
       chordBytes[index] |= B00100000;
     }
     // Increment the index if the current byte has any keys set.
@@ -75,27 +75,27 @@ public:
   
     // byte 2
     // R-
-    if (currentChord[1][3]) {
+    if (currentChord[KEY_H_D0][KEY_H_D1]) {
       chordBytes[index] |= B01000001;
     }
     // A
-    if (currentChord[2][0]) {
+    if (currentChord[KEY_a_D0][KEY_a_D1]) {
       chordBytes[index] |= B01000010;
     }
     // O
-    if (currentChord[2][1]) {
+    if (currentChord[KEY_o_D0][KEY_o_D1]) {
       chordBytes[index] |= B01000100;
     }
     // *
-    if (currentChord[0][4] || currentChord[1][4]) {
+    if (currentChord[KEY_STAR1_D0][KEY_STAR1_D1] || currentChord[KEY_STAR2_D0][KEY_STAR2_D1]) {
       chordBytes[index] |= B01001000;
     }
     // E
-    if (currentChord[2][2]) {
+    if (currentChord[KEY_e_D0][KEY_e_D1]) {
       chordBytes[index] |= B01010000;
     }
     // U
-    if (currentChord[2][3]) {
+    if (currentChord[KEY_e_D0][KEY_e_D1]) {
       chordBytes[index] |= B01100000;
     }
     // Increment the index if the current byte has any keys set.
@@ -105,27 +105,27 @@ public:
   
     // byte 3
     // -F
-    if (currentChord[3][0]) {
+    if (currentChord[KEY_f_D0][KEY_f_D1]) {
       chordBytes[index] |= B10000001;
     }
     // -R
-    if (currentChord[4][0]) {
+    if (currentChord[KEY_r_D0][KEY_r_D1]) {
       chordBytes[index] |= B10000010;
     }
     // -P
-    if (currentChord[3][1]) {
+    if (currentChord[KEY_p_D0][KEY_p_D1]) {
       chordBytes[index] |= B10000100;
     }
     // -B
-    if (currentChord[4][1]) {
+    if (currentChord[KEY_b_D0][KEY_b_D1]) {
       chordBytes[index] |= B10001000;
     }
     // -L
-    if (currentChord[3][2]) {
+    if (currentChord[KEY_l_D0][KEY_l_D1]) {
       chordBytes[index] |= B10010000;
     }
     // -G
-    if (currentChord[4][2]) {
+    if (currentChord[KEY_g_D0][KEY_g_D1]) {
       chordBytes[index] |= B10100000;
     }
     // Increment the index if the current byte has any keys set.
@@ -135,23 +135,23 @@ public:
   
     // byte 4
     // -T
-    if (currentChord[3][3]) {
+    if (currentChord[KEY_t_D0][KEY_t_D1]) {
       chordBytes[index] |= B11000001;
     }
     // -S
-    if (currentChord[4][3]) {
+    if (currentChord[KEY_s_D0][KEY_s_D1]) {
       chordBytes[index] |= B11000010;
     }
     // -D
-    if (currentChord[3][4]) {
+    if (currentChord[KEY_d_D0][KEY_d_D1]) {
       chordBytes[index] |= B11000100;
     }
     // -Z
-    if (currentChord[4][4]) {
+    if (currentChord[KEY_z_D0][KEY_z_D1]) {
       chordBytes[index] |= B11001000;
     }
     // #
-    if (currentChord[2][4]) {
+    if (currentChord[KEY_SHARP_D0][KEY_SHARP_D1]) {
       chordBytes[index] |= B11010000;
     }
     // Increment the index if the current byte has any keys set.

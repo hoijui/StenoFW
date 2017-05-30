@@ -42,78 +42,78 @@ public:
     }
   
     // Byte 1
-    if (currentChord[0][0] || currentChord[1][0]) {
+    if (currentChord[KEY_S1_D0][KEY_S1_D1] || currentChord[KEY_S2_D0][KEY_S2_D1]) {
       chordBytes[1] += B01000000;
     }
-    if (currentChord[0][1]) {
+    if (currentChord[KEY_T_D0][KEY_T_D1]) {
       chordBytes[1] += B00010000;
     }
-    if (currentChord[1][1]) {
+    if (currentChord[KEY_K_D0][KEY_K_D1]) {
       chordBytes[1] += B00001000;
     }
-    if (currentChord[0][2]) {
+    if (currentChord[KEY_P_D0][KEY_P_D1]) {
       chordBytes[1] += B00000100;
     }
-    if (currentChord[1][2]) {
+    if (currentChord[KEY_W_D0][KEY_W_D1]) {
       chordBytes[1] += B00000010;
     }
-    if (currentChord[0][3]) {
+    if (currentChord[KEY_H_D0][KEY_H_D1]) {
       chordBytes[1] += B00000001;
     }
   
     // Byte 2
-    if (currentChord[1][3]) {
+    if (currentChord[KEY_R_D0][KEY_R_D1]) {
       chordBytes[2] += B01000000;
     }
-    if (currentChord[2][0]) {
+    if (currentChord[KEY_a_D0][KEY_a_D1]) {
       chordBytes[2] += B00100000;
     }
-    if (currentChord[2][1]) {
+    if (currentChord[KEY_o_D0][KEY_o_D1]) {
       chordBytes[2] += B00010000;
     }
-    if (currentChord[0][4] || currentChord[1][4]) {
+    if (currentChord[KEY_STAR1_D0][KEY_STAR1_D1] || currentChord[KEY_STAR2_D0][KEY_STAR2_D1]) {
       chordBytes[2] += B00001000;
     }
   
     // Byte 3
-    if (currentChord[2][2]) {
+    if (currentChord[KEY_e_D0][KEY_e_D1]) {
       chordBytes[3] += B00001000;
     }
-    if (currentChord[2][3]) {
+    if (currentChord[KEY_u_D0][KEY_u_D1]) {
       chordBytes[3] += B00000100;
     }
-    if (currentChord[3][0]) {
+    if (currentChord[KEY_f_D0][KEY_f_D1]) {
       chordBytes[3] += B00000010;
     }
-    if (currentChord[4][0]) {
+    if (currentChord[KEY_r_D0][KEY_r_D1]) {
       chordBytes[3] += B00000001;
     }
   
     // Byte 4
-    if (currentChord[3][1]) {
+    if (currentChord[KEY_p_D0][KEY_p_D1]) {
       chordBytes[4] += B01000000;
     }
-    if (currentChord[4][1]) {
+    if (currentChord[KEY_b_D0][KEY_b_D1]) {
       chordBytes[4] += B00100000;
     }
-    if (currentChord[3][2]) {
+    if (currentChord[KEY_l_D0][KEY_l_D1]) {
       chordBytes[4] += B00010000;
     }
-    if (currentChord[4][2]) {
+    if (currentChord[KEY_g_D0][KEY_g_D1]) {
       chordBytes[4] += B00001000;
     }
-    if (currentChord[3][3]) {
+    if (currentChord[KEY_t_D0][KEY_t_D1]) {
       chordBytes[4] += B00000100;
     }
-    if (currentChord[4][3]) {
+    if (currentChord[KEY_s_D0][KEY_s_D1]) {
       chordBytes[4] += B00000010;
     }
-    if (currentChord[3][4]) {
+    if (currentChord[KEY_d_D0][KEY_d_D1]) {
       chordBytes[4] += B00000001;
     }
   
     // Byte 5
-    if (currentChord[4][4]) {
+    if (currentChord[KEY_z_D0][KEY_z_D1]) {
       chordBytes[5] += B00000001;
     }
   
