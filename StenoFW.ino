@@ -284,11 +284,11 @@ void readKeys() {
 void sendChord() {
   // If fn keys have been pressed, delegate to the corresponding method and return
   if (currentChord[KEY_FN1_D0][KEY_FN1_D1] && currentChord[KEY_FN2_D0][KEY_FN2_D1]) {
-    fn1fn2();
+    pressedFn1Fn2();
   } else if (currentChord[KEY_FN1_D0][KEY_FN1_D1]) {
-    fn1();
+    pressedFn1();
   } else if (currentChord[KEY_FN2_D0][KEY_FN2_D1]) {
-    fn2();
+    pressedFn2();
   } else {
     protocol.sendChord(currentChord);
   }
@@ -304,7 +304,7 @@ void sendChord() {
  *   PH-G   ->   Set Gemini PR protocol mode
  *   PH-B   ->   Set TX Bolt protocol mode
  */
-void fn1() {
+void pressedFn1() {
 #if defined(PROTOCOL_SUPPORT_GEMINI) || defined(PROTOCOL_SUPPORT_NKRO) || defined(PROTOCOL_SUPPORT_TX_BOLT)
   // "PH" -> Set protocol
   if (currentChord[KEY_P_D0][KEY_P_D1] && currentChord[KEY_H_D0][KEY_H_D1]) {
@@ -337,7 +337,7 @@ void fn1() {
  *
  * Current functions: none
  */
-void fn2() {
+void pressedFn2() {
 
 }
 
@@ -347,7 +347,7 @@ void fn2() {
  *   HR-P   ->   LED intensity up
  *   HR-F   ->   LED intensity down
  */
-void fn1fn2() {
+void pressedFn1Fn2() {
   // "HR" -> Change LED intensity
   if (currentChord[KEY_H_D0][KEY_H_D1] && currentChord[KEY_R_D0][KEY_R_D1]) {
     // "-P" -> LED intensity up
