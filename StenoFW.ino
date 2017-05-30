@@ -1,4 +1,4 @@
-/**
+/*
  * StenoFW is a firmware for Stenoboard keyboards.
  *
  * This program is free software: you can redistribute it and/or modify
