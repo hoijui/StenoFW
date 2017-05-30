@@ -123,6 +123,7 @@ boolean recordCurrentKeys() {
 /**
  * Checks for debouncing keys.
  * If a key is pressed, we add it to the debouncing keys and record the time.
+ * @see https://en.wikipedia.org/wiki/Keyboard_technology#Debouncing
  */
 void checkNewDebouncingKeys() {
   for (int i = 0; i < ROWS; i++) {
