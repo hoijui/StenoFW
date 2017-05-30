@@ -55,7 +55,10 @@ int ledIntensity = 1; // Min 0 - Max 255
 #define NKRO 2
 int protocol = NKRO;
 
-// This is called when the keyboard is connected
+/**
+ * Sets up the initial state.
+ * This is called when the keyboard is connected.
+ */
 void setup() {
   Keyboard.begin();
   Serial.begin(9600);
@@ -71,7 +74,10 @@ void setup() {
   clearBooleanMatrixes();
 }
 
-// Read key states and handle all chord events
+/**
+ * Reads key states and handles all chord events.
+ * This run in an endless loop.
+ */
 void loop() {
   readKeys();
 
@@ -96,7 +102,10 @@ void loop() {
   }
 }
 
-// Record all pressed keys into current chord. Return false if no key is currently pressed
+/**
+ * Records all pressed keys into the current chord.
+ * @return false if no key is currently pressed
+ */
 boolean recordCurrentKeys() {
   boolean isAnyKeyPressed = false;
   for (int i = 0; i < ROWS; i++) {
@@ -110,7 +119,10 @@ boolean recordCurrentKeys() {
   return isAnyKeyPressed;
 }
 
-// If a key is pressed, add it to debouncing keys and record the time
+/**
+ * Checks for debouncing keys.
+ * If a key is pressed, we add it to the debouncing keys and record the time.
+ */
 void checkNewDebouncingKeys() {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -121,8 +133,10 @@ void checkNewDebouncingKeys() {
     }
   }
 }
-
-// Check already debouncing keys. If a key debounces, start chord recording.
+/**
+ * Checks already debouncing keys.
+ * If a key debounces, start chord recording.
+ */
 void checkAlreadyDebouncingKeys() {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -139,14 +153,18 @@ void checkAlreadyDebouncingKeys() {
   }
 }
 
-// Set all values of all boolean matrixes to false
+/**
+ * Sets all values of all boolean matrixes to false.
+ */
 void clearBooleanMatrixes() {
   clearBooleanMatrix(currentChord, false);
   clearBooleanMatrix(currentKeyReadings, false);
   clearBooleanMatrix(debouncingKeys, false);
 }
 
-// Set all values of the passed matrix to the given value
+/**
+ * Sets all values of the passed matrix to the given value.
+ */
 void clearBooleanMatrix(boolean booleanMatrix[][COLS], boolean value) {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -155,7 +173,9 @@ void clearBooleanMatrix(boolean booleanMatrix[][COLS], boolean value) {
   }
 }
 
-// Read all keys
+/**
+ * Reads all keys from digital I/O into a boolean matrix.
+ */
 void readKeys() {
   for (int i = 0; i < ROWS; i++) {
     digitalWrite(rowPins[i], LOW);
@@ -166,7 +186,9 @@ void readKeys() {
   }
 }
 
-// Send current chord using NKRO Keyboard emulation
+/**
+ * Sends the current chord using the NKRO keyboard emulation.
+ */
 void sendChordNkro() {
   // QWERTY mapping
   char qwertyMapping[ROWS][COLS] = {
@@ -203,7 +225,9 @@ void sendChordNkro() {
   Keyboard.releaseAll();
 }
 
-// Send current chord over serial using the Gemini protocol.
+/**
+ * Sends the current chord over serial using the Gemini protocol.
+ */
 void sendChordGemini() {
   // Initialize chord bytes
   byte chordBytes[] = {B10000000, B0, B0, B0, B0, B0};
@@ -295,15 +319,19 @@ void sendChordGemini() {
   }
 }
 
+/**
+ * Sends the current chord over serial using the TX Bolt protocol.
+ * TX Bolt uses a variable length packet.
+ * Only those bytes that have active keys are sent.
+ * The header bytes indicate which keys are being sent.
+ * They must be sent in order.
+ * It is a good idea to send a zero after every packet.
+ * 00XXXXXX 01XXXXXX 10XXXXXX 110XXXXX
+ *   HWPKTS   UE*OAR   GLBPRF    #ZDST
+ */
 void sendChordTxBolt() {
   byte chordBytes[] = {B0, B0, B0, B0, B0};
   int index = 0;
-
-  // TX Bolt uses a variable length packet. Only those bytes that have active
-  // keys are sent. The header bytes indicate which keys are being sent. They
-  // must be sent in order. It is a good idea to send a zero after every packet.
-  // 00XXXXXX 01XXXXXX 10XXXXXX 110XXXXX
-  //   HWPKTS   UE*OAR   GLBPRF    #ZDST
 
   // byte 1
   // S-
@@ -428,10 +456,13 @@ void sendChordTxBolt() {
   }
 }
 
-// Send the chord using the current protocol. If there are fn keys
-// pressed, delegate to the corresponding function instead.
-// In future versions, there should also be a way to handle fn keys presses before
-// they are released, eg. for mouse emulation functionality or custom key presses.
+/**
+ * Sends the chord using the current protocol.
+ * If there are fn keys pressed, delegate to the corresponding function instead.
+ * In future versions, there should also be a way to handle fn key presses
+ * before they are released,
+ * eg. for mouse emulation functionality or custom key presses.
+ */
 void sendChord() {
   // If fn keys have been pressed, delegate to corresponding method and return
   if (currentChord[0][5] && currentChord[1][5]) {
@@ -454,16 +485,16 @@ void sendChord() {
   }
 }
 
-// Fn1 functions
-//
-// This function is called when "fn1" key has been pressed, but not "fn2".
-// Tip: maybe it is better to avoid using "fn1" key alone in order to avoid
-// accidental activation?
-//
-// Current functions:
-//    PH-PB   ->   Set NKRO Keyboard emulation mode
-//    PH-G   ->   Set Gemini PR protocol mode
-//    PH-B   ->   Set TX Bolt protocol mode
+/**
+ * Is called when the "fn1" key has been pressed, but not "fn2".
+ * Tip: maybe it is better to avoid using "fn1" key alone in order to avoid
+ * accidental activation?
+ *
+ * Current functions:
+ *   PH-PB  ->   Set NKRO Keyboard emulation mode
+ *   PH-G   ->   Set Gemini PR protocol mode
+ *   PH-B   ->   Set TX Bolt protocol mode
+ */
 void fn1() {
   // "PH" -> Set protocol
   if (currentChord[0][2] && currentChord[0][3]) {
@@ -482,24 +513,24 @@ void fn1() {
   }
 }
 
-// Fn2 functions
-//
-// This function is called when "fn2" key has been pressed, but not "fn1".
-// Tip: maybe it is better to avoid using "fn2" key alone in order to avoid
-// accidental activation?
-//
-// Current functions: none.
+/**
+ * Is called when the "fn2" key has been pressed, but not "fn1".
+ *
+ * Tip: maybe it is better to avoid using "fn2" key alone in order to avoid
+ * accidental activation?
+ *
+ * Current functions: none
+ */
 void fn2() {
 
 }
 
-// Fn1-Fn2 functions
-//
-// This function is called when both "fn1" and "fn1" keys have been pressed.
-//
-// Current functions:
-//   HR-P   ->   LED intensity up
-//   HR-F   ->   LED intensity down
+/**
+ * Is called when both the "fn1" and the "fn2" keys have been pressed.
+ * Current functions:
+ *   HR-P   ->   LED intensity up
+ *   HR-F   ->   LED intensity down
+ */
 void fn1fn2() {
   // "HR" -> Change LED intensity
   if (currentChord[0][3] && currentChord[1][3]) {
