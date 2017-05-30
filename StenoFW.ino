@@ -19,7 +19,9 @@
 
 #include <Keyboard.h>
 
+// Number of key rows of our keyboard hardware
 #define ROWS 5
+// Number of key columns of our keyboard hardware
 #define COLS 6
 
 /* The following matrix is shown here for reference only.
