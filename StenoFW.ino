@@ -506,7 +506,7 @@ void fn1fn2() {
     // "-P" -> LED intensity up
     if (currentChord[3][1]) {
       if (ledIntensity == 0) {
-        ledIntensity +=1;
+        ledIntensity += 1;
       } else if(ledIntensity < 50) {
         ledIntensity += 10;
       } else {
