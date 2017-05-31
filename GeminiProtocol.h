@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-   Copyright 2014 Emanuele Caruso. See the LICENSE file for details.
+   Copyright 2014 - 2017 Emanuele Caruso. See the LICENSE file for details.
  */
  
 #ifndef GeminiProtocol_h
