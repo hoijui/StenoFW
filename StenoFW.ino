@@ -149,12 +149,12 @@ void setup() {
 #if defined(PROTOCOL_SUPPORT_GEMINI) || defined(PROTOCOL_SUPPORT_TX_BOLT)
   Serial.begin(9600);
 #endif
-  for (int i = 0; i < COLS; i++) {
-    pinMode(colPins[i], INPUT_PULLUP);
+  for (int column = 0; column < COLS; column++) {
+    pinMode(colPins[column], INPUT_PULLUP);
   }
-  for (int i = 0; i < ROWS; i++) {
-    pinMode(rowPins[i], OUTPUT);
-    digitalWrite(rowPins[i], HIGH);
+  for (int row = 0; row < ROWS; row++) {
+    pinMode(rowPins[row], OUTPUT);
+    digitalWrite(rowPins[row], HIGH);
   }
   pinMode(ledPin, OUTPUT);
   analogWrite(ledPin, ledIntensity);
@@ -195,10 +195,10 @@ void loop() {
  */
 boolean recordCurrentKeys() {
   boolean isAnyKeyPressed = false;
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if (currentKeyReadings[i][j] == true) {
-        currentChord[i][j] = true;
+  for (int row = 0; row < ROWS; row++) {
+    for (int column = 0; column < COLS; column++) {
+      if (currentKeyReadings[row][column] == true) {
+        currentChord[row][column] = true;
         isAnyKeyPressed = true;
       }
     }
@@ -212,11 +212,11 @@ boolean recordCurrentKeys() {
  * @see https://en.wikipedia.org/wiki/Keyboard_technology#Debouncing
  */
 void checkNewDebouncingKeys() {
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if (currentKeyReadings[i][j] == true && debouncingKeys[i][j] == false) {
-        debouncingKeys[i][j] = true;
-        debouncingMicros[i][j] = micros();
+  for (int row = 0; row < ROWS; row++) {
+    for (int column = 0; column < COLS; column++) {
+      if (currentKeyReadings[row][column] == true && debouncingKeys[row][column] == false) {
+        debouncingKeys[row][column] = true;
+        debouncingMicros[row][column] = micros();
       }
     }
   }
@@ -226,15 +226,15 @@ void checkNewDebouncingKeys() {
  * If a key debounces, start chord recording.
  */
 void checkAlreadyDebouncingKeys() {
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if (debouncingKeys[i][j] == true && currentKeyReadings[i][j] == false) {
-        debouncingKeys[i][j] = false;
+  for (int row = 0; row < ROWS; row++) {
+    for (int column = 0; column < COLS; column++) {
+      if (debouncingKeys[row][column] == true && currentKeyReadings[row][column] == false) {
+        debouncingKeys[row][column] = false;
         continue;
       }
-      if (debouncingKeys[i][j] == true && (micros() - debouncingMicros[i][j]) / 1000 > debounceMillis) {
+      if (debouncingKeys[row][column] == true && micros() - debouncingMicros[row][column] / 1000 > debounceMillis) {
         isStrokeInProgress = true;
-        currentChord[i][j] = true;
+        currentChord[row][column] = true;
         return;
       }
     }
@@ -254,9 +254,9 @@ void clearBooleanMatrixes() {
  * Sets all values of the passed matrix to the given value.
  */
 void clearBooleanMatrix(boolean booleanMatrix[][COLS], const boolean value) {
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      booleanMatrix[i][j] = value;
+  for (int row = 0; row < ROWS; row++) {
+    for (int column = 0; column < COLS; column++) {
+      booleanMatrix[row][column] = value;
     }
   }
 }
@@ -265,12 +265,12 @@ void clearBooleanMatrix(boolean booleanMatrix[][COLS], const boolean value) {
  * Reads all keys from digital I/O into a boolean matrix.
  */
 void readKeys() {
-  for (int i = 0; i < ROWS; i++) {
-    digitalWrite(rowPins[i], LOW);
-    for (int j = 0; j < COLS; j++) {
-      currentKeyReadings[i][j] = digitalRead(colPins[j]) == LOW ? true : false;
+  for (int row = 0; row < ROWS; row++) {
+    digitalWrite(rowPins[row], LOW);
+    for (int column = 0; column < COLS; column++) {
+      currentKeyReadings[row][column] = digitalRead(colPins[column]) == LOW ? true : false;
     }
-    digitalWrite(rowPins[i], HIGH);
+    digitalWrite(rowPins[row], HIGH);
   }
 }
 
