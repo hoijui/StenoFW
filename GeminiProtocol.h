@@ -32,7 +32,7 @@ public:
 //    Serial.begin(9600);
 //  }
 
-  void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
+  virtual void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
     // Initialize chord bytes
     byte chordBytes[] = {B10000000, B0, B0, B0, B0, B0};
   

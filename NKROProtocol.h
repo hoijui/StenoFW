@@ -33,7 +33,7 @@ public:
     Keyboard.begin();
   }
 
-  void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
+  virtual void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
     // QWERTY mapping
     char keyMapping[ROWS][COLS] = {
       {'q', 'w', 'e', 'r', 't', ' '},

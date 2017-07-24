@@ -53,15 +53,15 @@ int ledIntensity = 1; // Min 0 - Max 255
 
 // Protocols
 #ifdef PROTOCOL_SUPPORT_GEMINI
-GeminiProtocol protocolGemini;
+Protocol* protocolGemini = new GeminiProtocol();
 #endif
 #ifdef PROTOCOL_SUPPORT_NKRO
-NKROProtocol protocolNKRO;
+Protocol* protocolNKRO = new NKROProtocol();
 #endif
 #ifdef PROTOCOL_SUPPORT_TX_BOLT
-TxBoltProtocol protocolTxBolt;
+Protocol* protocolTxBolt = new TxBoltProtocol();
 #endif
-Protocol& protocol = PROTOCOL_DEFAULT;
+Protocol* protocol = PROTOCOL_DEFAULT;
 
 /**
  * Sets up the initial state.
@@ -212,7 +212,7 @@ void sendChord() {
   } else if (currentChord[KEY_FN2_D0][KEY_FN2_D1]) {
     pressedFn2();
   } else {
-    protocol.sendChord(currentChord);
+    protocol->sendChord(currentChord);
   }
 }
 
