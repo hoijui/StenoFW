@@ -222,8 +222,8 @@ void sendChord() {
  * accidental activation?
  *
  * Current functions:
- *   PH-PB  ->   Set NKRO Keyboard emulation mode
  *   PH-G   ->   Set Gemini PR protocol mode
+ *   PH-PB  ->   Set NKRO Keyboard emulation mode
  *   PH-B   ->   Set TX Bolt protocol mode
  */
 void pressedFn1() {
@@ -231,6 +231,7 @@ void pressedFn1() {
   // "PH" -> Set protocol
   if (currentChord[KEY_P_D0][KEY_P_D1] && currentChord[KEY_H_D0][KEY_H_D1]) {
   #ifdef PROTOCOL_SUPPORT_GEMINI
+    // "-G" -> Gemini
     if (currentChord[KEY_g_D0][KEY_g_D1]) {
       protocol = protocolGemini;
     }
