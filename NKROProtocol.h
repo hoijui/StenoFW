@@ -32,10 +32,10 @@ public:
   NKROProtocol() {
     Keyboard.begin();
   }
-  
+
   void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
     // QWERTY mapping
-    char qwertyMapping[ROWS][COLS] = {
+    char keyMapping[ROWS][COLS] = {
       {'q', 'w', 'e', 'r', 't', ' '},
       {'a', 's', 'd', 'f', 'g', ' '},
       {'c', 'v', 'n', 'm', '3', ' '},
@@ -43,26 +43,26 @@ public:
       {'j', 'k', 'l', ';', '\'', ' '}
     };
     int keyCounter = 0;
-    char qwertyKeys[ROWS * COLS];
+    char pressedKeys[ROWS * COLS];
     boolean firstKeyPressed = false;
   
-    // Calculate qwerty keys array using qwertyMappings[][]
-    for (int i = 0; i < ROWS; i++) {
-      for (int j = 0; j < COLS; j++) {
-        if (currentChord[i][j]) {
-          qwertyKeys[keyCounter] = qwertyMapping[i][j];
+    // Calculate fresulting keys array using keyMappings[][]
+    for (int row = 0; row < ROWS; row++) {
+      for (int column = 0; column < COLS; column++) {
+        if (currentChord[row][column]) {
+          pressedKeys[keyCounter] = keyMapping[row][column];
           keyCounter++;
         }
       }
     }
     // Emulate keyboard key presses
-    for (int i = 0; i < keyCounter; i++) {
-      if (qwertyKeys[i] != ' ') {
-        Keyboard.press(qwertyKeys[i]);
+    for (int key = 0; key < keyCounter; key++) {
+      if (pressedKeys[key] != ' ') {
+        Keyboard.press(pressedKeys[key]);
         if (!firstKeyPressed) {
           firstKeyPressed = true;
         } else {
-          Keyboard.release(qwertyKeys[i]);
+          Keyboard.release(pressedKeys[key]);
         }
       }
     }
