@@ -19,10 +19,12 @@
 
 // Configuration section (begin)
 
+#define PROTOCOL_SUPPORT_TEST
 #define PROTOCOL_SUPPORT_GEMINI
 #define PROTOCOL_SUPPORT_NKRO
 #define PROTOCOL_SUPPORT_TX_BOLT
 
+//#define PROTOCOL_DEFAULT protocolTest
 //#define PROTOCOL_DEFAULT protocolGemini
 #define PROTOCOL_DEFAULT protocolNKRO
 //#define PROTOCOL_DEFAULT protocolTxBolt
@@ -31,6 +33,9 @@
 
 // Configuration section (end)
 
+#ifdef PROTOCOL_SUPPORT_TEST
+  #include "TestProtocol.h"
+#endif
 #ifdef PROTOCOL_SUPPORT_GEMINI
   #include "GeminiProtocol.h"
 #endif
@@ -52,6 +57,9 @@ unsigned long debouncingMicros[ROWS][COLS];
 int ledIntensity = 1; // Min 0 - Max 255
 
 // Protocols
+#ifdef PROTOCOL_SUPPORT_TEST
+Protocol* protocolTest = new TestProtocol();
+#endif
 #ifdef PROTOCOL_SUPPORT_GEMINI
 Protocol* protocolGemini = new GeminiProtocol();
 #endif
@@ -222,6 +230,7 @@ void sendChord() {
  * accidental activation?
  *
  * Current functions:
+ *   PH-T   ->   Set Test output Keyboard emulation mode
  *   PH-G   ->   Set Gemini PR protocol mode
  *   PH-PB  ->   Set NKRO Keyboard emulation mode
  *   PH-B   ->   Set TX Bolt protocol mode
@@ -230,6 +239,12 @@ void pressedFn1() {
 #if defined(PROTOCOL_SUPPORT_GEMINI) || defined(PROTOCOL_SUPPORT_NKRO) || defined(PROTOCOL_SUPPORT_TX_BOLT)
   // "PH" -> Set protocol
   if (currentChord[KEY_P_D0][KEY_P_D1] && currentChord[KEY_H_D0][KEY_H_D1]) {
+  #ifdef PROTOCOL_SUPPORT_TEST
+    // "-T" -> Test
+    if (currentChord[KEY_t_D0][KEY_t_D1]) {
+      protocol = protocolTest;
+    }
+  #endif
   #ifdef PROTOCOL_SUPPORT_GEMINI
     // "-G" -> Gemini
     if (currentChord[KEY_g_D0][KEY_g_D1]) {
