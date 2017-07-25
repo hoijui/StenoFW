@@ -20,11 +20,13 @@
 // Configuration section (begin)
 
 #define PROTOCOL_SUPPORT_TEST
+#define PROTOCOL_SUPPORT_STENO_KEYBOARD
 #define PROTOCOL_SUPPORT_GEMINI
 #define PROTOCOL_SUPPORT_NKRO
 #define PROTOCOL_SUPPORT_TX_BOLT
 
 //#define PROTOCOL_DEFAULT protocolTest
+//#define PROTOCOL_DEFAULT protocolStenoKeyboard
 //#define PROTOCOL_DEFAULT protocolGemini
 #define PROTOCOL_DEFAULT protocolNKRO
 //#define PROTOCOL_DEFAULT protocolTxBolt
@@ -35,6 +37,9 @@
 
 #ifdef PROTOCOL_SUPPORT_TEST
   #include "TestProtocol.h"
+#endif
+#ifdef PROTOCOL_SUPPORT_STENO_KEYBOARD
+  #include "StenoKeyboardProtocol.h"
 #endif
 #ifdef PROTOCOL_SUPPORT_GEMINI
   #include "GeminiProtocol.h"
@@ -59,6 +64,9 @@ int ledIntensity = 1; // Min 0 - Max 255
 // Protocols
 #ifdef PROTOCOL_SUPPORT_TEST
 Protocol* protocolTest = new TestProtocol();
+#endif
+#ifdef PROTOCOL_SUPPORT_STENO_KEYBOARD
+Protocol* protocolStenoKeyboard = new StenoKeyboardProtocol();
 #endif
 #ifdef PROTOCOL_SUPPORT_GEMINI
 Protocol* protocolGemini = new GeminiProtocol();
@@ -243,6 +251,12 @@ void pressedFn1() {
     // "-T" -> Test
     if (currentChord[KEY_t_D0][KEY_t_D1]) {
       protocol = protocolTest;
+    }
+  #endif
+  #ifdef PROTOCOL_SUPPORT_STENO_KEYBOARD
+    // "-S" -> Test
+    if (currentChord[KEY_s_D0][KEY_s_D1]) {
+      protocol = protocolStenoKeyboard;
     }
   #endif
   #ifdef PROTOCOL_SUPPORT_GEMINI
