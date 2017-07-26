@@ -235,16 +235,16 @@ void pressedFn1() {
       protocol = protocolGemini;
     }
   #endif
-  #ifdef PROTOCOL_SUPPORT_NKRO
-    // "-PB" -> NKRO Keyboard
-    if (currentChord[KEY_p_D0][KEY_p_D1] && currentChord[KEY_b_D0][KEY_b_D1]) {
-      protocol = protocolNKRO;
-    }
-  #endif
   #ifdef PROTOCOL_SUPPORT_TX_BOLT
     // "-B" -> TX Bolt
     if (currentChord[KEY_b_D0][KEY_b_D1]) {
       protocol = protocolTxBolt;
+    }
+  #endif
+  #ifdef PROTOCOL_SUPPORT_NKRO
+    // "-PB" -> NKRO Keyboard
+    if (currentChord[KEY_p_D0][KEY_p_D1] && currentChord[KEY_b_D0][KEY_b_D1]) {
+      protocol = protocolNKRO;
     }
   #endif
   }
