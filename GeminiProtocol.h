@@ -16,7 +16,7 @@
 
    Copyright 2014 - 2017 Emanuele Caruso. See the LICENSE file for details.
  */
- 
+
 #ifndef GeminiProtocol_h
 #define GeminiProtocol_h
 
@@ -35,12 +35,12 @@ public:
   virtual void sendChord(const boolean (&currentChord)[ROWS][COLS]) const {
     // Initialize chord bytes
     byte chordBytes[] = {B10000000, B0, B0, B0, B0, B0};
-  
+
     // Byte 0
     if (currentChord[2][4]) {
       chordBytes[0] = B10000001;
     }
-  
+
     // Byte 1
     if (currentChord[KEY_S1_D0][KEY_S1_D1] || currentChord[KEY_S2_D0][KEY_S2_D1]) {
       chordBytes[1] += B01000000;
@@ -60,7 +60,7 @@ public:
     if (currentChord[KEY_H_D0][KEY_H_D1]) {
       chordBytes[1] += B00000001;
     }
-  
+
     // Byte 2
     if (currentChord[KEY_R_D0][KEY_R_D1]) {
       chordBytes[2] += B01000000;
@@ -74,7 +74,7 @@ public:
     if (currentChord[KEY_STAR1_D0][KEY_STAR1_D1] || currentChord[KEY_STAR2_D0][KEY_STAR2_D1]) {
       chordBytes[2] += B00001000;
     }
-  
+
     // Byte 3
     if (currentChord[KEY_e_D0][KEY_e_D1]) {
       chordBytes[3] += B00001000;
@@ -88,7 +88,7 @@ public:
     if (currentChord[KEY_r_D0][KEY_r_D1]) {
       chordBytes[3] += B00000001;
     }
-  
+
     // Byte 4
     if (currentChord[KEY_p_D0][KEY_p_D1]) {
       chordBytes[4] += B01000000;
@@ -111,12 +111,12 @@ public:
     if (currentChord[KEY_d_D0][KEY_d_D1]) {
       chordBytes[4] += B00000001;
     }
-  
+
     // Byte 5
     if (currentChord[KEY_z_D0][KEY_z_D1]) {
       chordBytes[5] += B00000001;
     }
-  
+
     // Send chord bytes over serial
     for (int i = 0; i < 6; i++) {
       Serial.write(chordBytes[i]);
